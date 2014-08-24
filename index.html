@@ -170,7 +170,97 @@
 
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js" type="text/javascript"></script>
-    <script src="http://www.webzah.com/javascript/ent-custom.js" type="text/javascript"></script>
+
+    <script src="js/tabs.js"></script>
+    <script src="js/toolbox.history.js"></script>
+
+
+    <script type="text/javascript">
+
+        $(function () {
+
+            $('.menu-trigger').click(function () {
+                $('#container').addClass('menu-open');
+            });
+
+            $(".navi, .pusher").click(function () {
+                $('#container').removeClass('menu-open');
+            });
+
+            $("ul.navi").tabs("div#tools > div", { history: true });
+
+        });
+
+        $(function () {
+
+            $('#Send').click(function () {
+
+                // name validation
+
+                var nameVal = $("#name").val();
+                if (nameVal == '') {
+
+                    $("#name_error").html('');
+                    $("#name").after('<label class="error" id="name_error"><span></span>Please enter your name.</label>');
+                    return false
+                }
+                else {
+                    $("#name_error").html('');
+                }
+
+                /// email validation
+
+                var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+                var emailaddressVal = $("#email").val();
+
+                if (emailaddressVal == '') {
+                    $("#email_error").html('');
+                    $("#email").after('<label class="error" id="email_error"><span></span>Please enter your email address.</label>');
+                    return false
+                }
+                else if (!emailReg.test(emailaddressVal)) {
+                    $("#email_error").html('');
+                    $("#email").after('<label class="error" id="email_error"><span></span>Enter a valid email address!</label>');
+                    return false
+
+                }
+                else {
+                    $("#email_error").html('');
+                }
+
+                $.post("frm/processor.php", $("#MYFORM").serialize(),
+
+                 function (response) {
+
+                     if (response == 1) {
+                         $("#after_submit").html('');
+                         $("#cptp").after('<div class="success" id="after_submit">Your message has been sent!</div>');
+                     }
+                     else {
+                         $("#after_submit").html('');
+                         $("#security_code").after('<label class="error" id="after_submit"><span></span>Error! Invalid verification code.</label>');
+                     }
+
+
+                 });
+
+                return false;
+            });
+
+            // refresh captcha
+            $('img#captcha').click(function () {
+
+                change_captcha();
+            });
+
+            function change_captcha() {
+                document.getElementById('captcha').src = "frm/CaptchaSecurityImages.php?rnd=" + Math.random();
+                $("#security_code").val('');
+            }
+
+        });
+
+    </script>
 
 </body>
 </html>
